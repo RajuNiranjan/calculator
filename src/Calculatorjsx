@@ -1,0 +1,70 @@
+import React, { useState } from "react";
+import "./styles.css";
+
+const Calculator = () => {
+  const [displayValue, setDisplayValue] = useState("0");
+  const [expression, setExpression] = useState("");
+  const [evaluated, setEvaluated] = useState(false);
+
+  const handleNumberClick = (num) => {
+    if (evaluated) {
+      setDisplayValue(num === "0" ? "0" : num);
+      setExpression(num === "0" ? "" : num);
+      setEvaluated(false);
+    } else {
+      setDisplayValue(displayValue === "0" ? num : displayValue + num);
+      setExpression(expression + num);
+    }
+  };
+
+  const handleOperatorClick = (operator) => {
+    if (evaluated) {
+      setExpression(displayValue + operator);
+      setEvaluated(false);
+    } else {
+      const lastChar = expression.slice(-1);
+      if (!"+-*/".includes(lastChar)) {
+        setExpression(expression + operator);
+      } else if (operator === "-" && lastChar !== "-") {
+        setExpression(expression + operator);
+      } else if (operator !== "-" && lastChar === "-") {
+        setExpression(expression.slice(0, -1) + operator);
+      }
+    }
+  };
+
+  const handleDecimalClick = () => {
+    if (!displayValue.includes(".") && !evaluated) {
+      setDisplayValue(displayValue + ".");
+      setExpression(expression + ".");
+    }
+  };
+
+  const handleClearClick = () => {
+    setDisplayValue("0");
+    setExpression("");
+    setEvaluated(false);
+  };
+
+  const handleEqualsClick = () => {
+    try {
+      const result = eval(expression);
+      setDisplayValue(result.toString());
+      setExpression(result.toString());
+      setEvaluated(true);
+    } catch (error) {
+      setDisplayValue("ERROR");
+      setExpression("");
+      setEvaluated(true);
+    }
+  };
+
+  return (
+    <div id="calculator">
+      <div id="display">{displayValue}</div>
+      {/* Render buttons for numbers, operators, decimal, and clear */}
+    </div>
+  );
+};
+
+export default Calculator;
